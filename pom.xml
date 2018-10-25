@@ -37,6 +37,7 @@
         <java.version>1.8</java.version>
         <bouncycastle.version>1.60</bouncycastle.version>
         <urlrewrite.version>4.0.4</urlrewrite.version>
+        <aws.version>1.11.435</aws.version>
     </properties>
 
     <licenses>
@@ -208,6 +209,12 @@
             <version>${bouncycastle.version}</version>
         </dependency>
 
+        <!-- AWS -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -228,6 +235,19 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- AWS SDK -->
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>${aws.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <finalName>ROOT</finalName>

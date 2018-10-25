@@ -54,7 +54,7 @@
         <level value="info" />
     </logger>
 
-    <logger name="org.craftercms.core.store.impl.s3">
+    <logger name="org.craftercms.engine.store.s3">
         <level value="debug"/>
     </logger>
 
