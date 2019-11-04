@@ -28,8 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.craftercms.commons.http.RequestContext;
 import org.craftercms.engine.controller.rest.preview.ProfileRestController;
 import org.craftercms.profile.api.Profile;
+import org.craftercms.security.processors.RequestSecurityProcessor;
 import org.craftercms.security.processors.RequestSecurityProcessorChain;
-import org.craftercms.security.processors.impl.CurrentAuthenticationResolvingProcessor;
 import org.craftercms.security.utils.SecurityUtils;
 
 /**
@@ -37,7 +37,7 @@ import org.craftercms.security.utils.SecurityUtils;
  *
  * @author Alfonso Vásquez
  */
-public class PreviewCurrentAuthenticationResolvingProcessor extends CurrentAuthenticationResolvingProcessor {
+public class PreviewCurrentAuthenticationResolvingProcessor implements RequestSecurityProcessor {
 
     private static final Log logger = LogFactory.getLog(PreviewCurrentAuthenticationResolvingProcessor.class);
 
@@ -80,7 +80,7 @@ public class PreviewCurrentAuthenticationResolvingProcessor extends CurrentAuthe
                 logger.debug("No persona set. Trying to resolve authentication normally");
             }
 
-            super.processRequest(context, processorChain);
+//            super.processRequest(context, processorChain);
         }
     }
 
