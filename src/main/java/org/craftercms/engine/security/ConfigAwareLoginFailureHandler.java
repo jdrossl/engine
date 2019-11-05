@@ -27,6 +27,7 @@ import org.craftercms.security.authentication.impl.LoginFailureHandlerImpl;
  *
  * @author avasquez
  */
+@Deprecated
 public class ConfigAwareLoginFailureHandler extends LoginFailureHandlerImpl {
 
     public static final String LOGIN_FAILURE_URL_KEY = "security.login.failureUrl";

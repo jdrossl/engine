@@ -42,6 +42,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
  *
  * @author avasquez
  */
+@Deprecated
 public class ConfigAwareUrlAccessRestrictionCheckingProcessor extends UrlAccessRestrictionCheckingProcessor {
 
     public static final String URL_RESTRICTION_KEY = "security.urlRestrictions.restriction";

@@ -27,6 +27,7 @@ import org.craftercms.security.authentication.impl.AuthenticationRequiredHandler
  *
  * @author avasquez
  */
+@Deprecated
 public class ConfigAwareAuthenticationRequiredHandler extends AuthenticationRequiredHandlerImpl {
 
     public static final String LOGIN_FORM_URL_KEY = "security.login.formUrl";

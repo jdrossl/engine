@@ -24,6 +24,7 @@
        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
 
 <!--    <import resource="classpath:crafter/security/security-context.xml"/>-->
+    <import resource="classpath:crafter/profile/client-context.xml"/>
 
     <bean id="crafter.pageAccessManager" class="org.craftercms.engine.security.CrafterPageAccessManager">
         <property name="authorizedRolesXPathQuery"
@@ -100,12 +101,32 @@
         <!-- Extract this -->
         <property name="filterProcessesUrl" value="/crafter-security-login"/>
         <property name="authenticationManager" ref="authenticationManager"/>
+        <!-- TODO: See if it is possible to add a handler for profile -->
         <property name="authenticationSuccessHandler" ref="formLoginSuccessHandler"/>
         <property name="authenticationFailureHandler" ref="formLoginFailureHandler"/>
         <!-- Extract this -->
         <property name="sessionAuthenticationStrategy">
             <bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy" />
         </property>
+    </bean>
+
+    <bean id="logoutSuccessHandler"
+          class="org.craftercms.engine.util.spring.security.ConfigAwareLogoutSuccessHandler">
+        <property name="defaultTargetUrl" value="${crafter.security.logout.success.url}"/>
+    </bean>
+
+    <bean name="logoutHandler"
+          class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+
+    <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg ref="logoutSuccessHandler"/>
+        <constructor-arg>
+            <bean class="org.springframework.security.web.authentication.logout.CompositeLogoutHandler">
+                <constructor-arg ref="crafter.logoutHandlers"/>
+            </bean>
+        </constructor-arg>
+        <!-- Extract -->
+        <property name="filterProcessesUrl" value="/crafter-security-logout"/>
     </bean>
 
     <bean id="requestCache" class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"/>
@@ -119,13 +140,66 @@
         <constructor-arg value="${crafter.security.login.form.url}"/>
     </bean>
 
+    <bean id="accessDeniedHandler" class="org.craftercms.engine.util.spring.security.ConfigAwareAccessDeniedHandler">
+        <constructor-arg value="${crafter.security.accessDenied.error.url}"/>
+    </bean>
+
     <bean id="exceptionTranslatorFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
         <constructor-arg ref="configAwareAuthenticationEntryPoint"/>
         <constructor-arg ref="requestCache"/>
+        <property name="accessDeniedHandler" ref="accessDeniedHandler"/>
     </bean>
 
+    <bean id="crafter.defaultTenantResolver" class="org.craftercms.security.utils.tenant.DefaultTenantsResolver">
+        <property name="defaultTenantNames" value="${crafter.security.tenant.default.names}"/>
+    </bean>
+
+    <bean id="crafter.paramTenantResolver" class="org.craftercms.security.utils.tenant.ParamTenantsResolver"/>
+
+    <bean id="crafter.tenantsResolver" class="org.craftercms.security.utils.tenant.TenantsResolverChain">
+        <property name="resolvers">
+            <list>
+                <ref bean="crafter.paramTenantResolver"/>
+                <ref bean="crafter.defaultTenantResolver"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="crafter.authenticationCacheConfig" class="net.sf.ehcache.config.CacheConfiguration">
+        <property name="name" value="authenticationCache"/>
+        <property name="maxEntriesLocalHeap" value="${crafter.security.authentication.cache.maxElementsInMemory}"/>
+        <property name="timeToIdleSeconds" value="${crafter.security.authentication.cache.timeToIdle}"/>
+    </bean>
+
+    <bean id="crafter.ehCacheAuthenticationCache" class="org.craftercms.commons.cache.EhCacheFactoryBean">
+        <property name="configuration" ref="crafter.authenticationCacheConfig"/>
+    </bean>
+
+    <bean id="crafter.authenticationCache"
+          class="org.craftercms.security.authentication.impl.EhCacheAuthenticationCache">
+        <property name="cache" ref="crafter.ehCacheAuthenticationCache"/>
+    </bean>
+
+    <bean id="crafter.profileAuthenticationManager"
+          class="org.craftercms.security.authentication.impl.AuthenticationManagerImpl">
+        <property name="authenticationService" ref="crafter.authenticationServiceRestClient"/>
+        <property name="authenticationCache" ref="crafter.authenticationCache"/>
+        <property name="profileService" ref="crafter.profileServiceRestClient"/>
+    </bean>
+
+    <bean id="profileAuthenticationProvider"
+          class="org.craftercms.engine.util.spring.security.ProfileAuthenticationProvider">
+        <constructor-arg ref="crafter.tenantsResolver"/>
+        <constructor-arg ref="crafter.profileAuthenticationManager"/>
+    </bean>
+
+    <!-- TODO: Add a handler for profile -->
+    <util:list id="crafter.logoutHandlers">
+        <ref bean="logoutHandler"/>
+    </util:list>
+
     <util:list id="crafter.authenticationProviders">
-        <bean class="org.springframework.security.config.authentication.AuthenticationManagerBeanDefinitionParser.NullAuthenticationProvider"/>
+        <ref bean="profileAuthenticationProvider"/>
     </util:list>
 
     <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
@@ -135,6 +209,7 @@
     <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
         <constructor-arg>
             <list>
+                <bean class="org.springframework.security.web.access.expression.WebExpressionVoter"/>
                 <bean class="org.springframework.security.access.vote.RoleVoter"/>
                 <bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
             </list>
@@ -150,10 +225,30 @@
         <property name="accessDecisionManager" ref="accessDecisionManager"/>
     </bean>
 
+    <bean id="servletApiFilter"
+          class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter">
+        <property name="authenticationEntryPoint" ref="configAwareAuthenticationEntryPoint"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="logoutHandlers" ref="crafter.logoutHandlers"/>
+    </bean>
+
+    <bean id="anonFilter" class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
+        <!-- Extract -->
+        <constructor-arg value="crafterEngine"/>
+    </bean>
+
+    <bean id="sessionMgmtFilter" class="org.springframework.security.web.session.SessionManagementFilter" >
+        <constructor-arg ref="securityContextRepository" />
+    </bean>
+
     <util:list id="crafter.securityFilters">
         <ref bean="securityContextFilter"/>
+        <ref bean="logoutFilter"/>
         <ref bean="formLoginFilter"/>
         <ref bean="requestCacheFilter"/>
+        <ref bean="servletApiFilter"/>
+        <ref bean="anonFilter"/>
+        <ref bean="sessionMgmtFilter"/>
         <ref bean="exceptionTranslatorFilter"/>
         <ref bean="filterSecurityInterceptor"/>
     </util:list>

@@ -27,6 +27,7 @@ import org.craftercms.security.authentication.impl.LoginSuccessHandlerImpl;
  *
  * @author avasquez
  */
+@Deprecated
 public class ConfigAwareLoginSuccessHandler extends LoginSuccessHandlerImpl {
 
     public static final String LOGIN_DEFAULT_SUCCESS_URL_KEY = "security.login.defaultSuccessUrl";

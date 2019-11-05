@@ -18,7 +18,7 @@
 package org.craftercms.engine.util.spring.security;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,8 +28,13 @@ import org.craftercms.engine.util.ConfigUtils;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import static java.util.Collections.singleton;
 
 /**
  * @author joseross
@@ -43,8 +48,8 @@ public class ConfigAwareSecurityMetadataSource implements FilterInvocationSecuri
     @Override
     public Collection<ConfigAttribute> getAttributes(final Object object) throws IllegalArgumentException {
         FilterInvocation invocation = (FilterInvocation) object;
-        //TODO: Cache config
         HierarchicalConfiguration siteConfig = ConfigUtils.getCurrentConfig();
+        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> map = new LinkedHashMap<>();
         if (siteConfig != null) {
             List<HierarchicalConfiguration> restrictionsConfig = siteConfig.configurationsAt(URL_RESTRICTION_KEY);
             if (CollectionUtils.isNotEmpty(restrictionsConfig)) {
@@ -53,11 +58,16 @@ public class ConfigAwareSecurityMetadataSource implements FilterInvocationSecuri
                     String expression = restrictionConfig.getString(URL_RESTRICTION_EXPRESSION_KEY);
                     if (StringUtils.isNotEmpty(url) && StringUtils.isNotEmpty(expression)) {
                         AntPathRequestMatcher matcher = new AntPathRequestMatcher(url);
-                        if (matcher.matches(invocation.getRequest())) {
-                            return Collections.singleton(new SecurityConfig(expression));
-                        }
+                        map.put(matcher, singleton(new SecurityConfig(expression)));
                     }
                 }
+                //TODO: Cache metadata
+                ExpressionBasedFilterInvocationSecurityMetadataSource metadataSource =
+                    new ExpressionBasedFilterInvocationSecurityMetadataSource(map,
+                        new DefaultWebSecurityExpressionHandler());
+
+                // delegate to get an expression based result :(
+                return metadataSource.getAttributes(object);
             }
         }
         return null;

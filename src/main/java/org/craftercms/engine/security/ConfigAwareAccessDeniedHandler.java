@@ -27,6 +27,7 @@ import org.craftercms.security.authorization.impl.AccessDeniedHandlerImpl;
  *
  * @author avasquez
  */
+@Deprecated
 public class ConfigAwareAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
     public static final String ACCESS_DENIED_ERROR_PAGE_URL_KEY = "security.accessDenied.errorPageUrl";
