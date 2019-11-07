@@ -17,7 +17,7 @@
 
 package org.craftercms.engine.util.spring.security;
 
-import org.craftercms.profile.api.Profile;
+import org.craftercms.security.authentication.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -29,13 +29,18 @@ import static java.util.stream.Collectors.toSet;
  */
 public class ProfileUserDetails extends User {
 
-    protected Profile profile;
+    protected Authentication authentication;
 
-    public ProfileUserDetails(final Profile profile, final UsernamePasswordAuthenticationToken authentication) {
+    public ProfileUserDetails(final Authentication authentication, final UsernamePasswordAuthenticationToken token) {
         // TODO: Encrypt password!
-        super(profile.getUsername(), authentication.getCredentials().toString(), profile.isEnabled(), true, true, true,
-            profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(toSet()));
-        this.profile = profile;
+        super(authentication.getProfile().getUsername(), token.getCredentials().toString(),
+            authentication.getProfile().isEnabled(), true, true, true,
+            authentication.getProfile().getRoles().stream().map(SimpleGrantedAuthority::new).collect(toSet()));
+        this.authentication = authentication;
+    }
+
+    public Authentication getAuthentication() {
+        return authentication;
     }
 
 }

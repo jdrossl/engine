@@ -28,12 +28,13 @@ import org.craftercms.engine.model.SiteItem;
 import org.craftercms.engine.scripting.impl.GroovyScript;
 import org.craftercms.engine.service.context.SiteContext;
 import org.craftercms.engine.util.spring.ApplicationContextAccessor;
+import org.craftercms.engine.util.spring.security.ProfileUserDetails;
 import org.craftercms.profile.api.Profile;
-import org.craftercms.security.authentication.Authentication;
-import org.craftercms.security.utils.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Utility methods for Groovy scripts.
@@ -155,15 +156,17 @@ public class GroovyScriptUtils {
     }
 
     private static void addSecurityVariables(Map<String, Object> variables) {
-        Authentication auth = SecurityUtils.getCurrentAuthentication();
-        Profile profile = null;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (auth != null) {
-            profile = auth.getProfile();
+        variables.put("user", auth);
+        variables.put(VARIABLE_AUTH, null);
+        variables.put(VARIABLE_PROFILE, null);
+
+        if (auth != null && auth.getPrincipal() instanceof ProfileUserDetails) {
+            ProfileUserDetails details = (ProfileUserDetails) auth.getPrincipal();
+            variables.put(VARIABLE_AUTH, details.getAuthentication());
+            variables.put(VARIABLE_PROFILE, details.getAuthentication().getProfile());
         }
-
-        variables.put(VARIABLE_AUTH, auth);
-        variables.put(VARIABLE_PROFILE, profile);
     }
 
     private static void addSiteContextVariable(Map<String, Object> variables) {

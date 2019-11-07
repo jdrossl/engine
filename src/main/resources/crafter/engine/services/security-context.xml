@@ -247,7 +247,8 @@
         <ref bean="formLoginFilter"/>
         <ref bean="requestCacheFilter"/>
         <ref bean="servletApiFilter"/>
-        <ref bean="anonFilter"/>
+        <!-- Need to ask if this is ok? -->
+        <!--ref bean="anonFilter"/-->
         <ref bean="sessionMgmtFilter"/>
         <ref bean="exceptionTranslatorFilter"/>
         <ref bean="filterSecurityInterceptor"/>

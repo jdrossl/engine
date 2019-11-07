@@ -17,7 +17,7 @@
 
 package org.craftercms.engine.util.spring.security;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.craftercms.security.authentication.Authentication;
 import org.craftercms.security.authentication.AuthenticationManager;
 import org.craftercms.security.utils.tenant.TenantsResolver;
@@ -44,24 +44,25 @@ public class ProfileAuthenticationProvider extends AbstractUserDetailsAuthentica
 
     @Override
     protected void additionalAuthenticationChecks(final UserDetails userDetails,
-                                                  final UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-
+                                                  final UsernamePasswordAuthenticationToken authentication)
+        throws AuthenticationException {
+        // do nothing
     }
 
     @Override
     protected UserDetails retrieveUser(final String username,
-                                       final UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+                                       final UsernamePasswordAuthenticationToken authentication)
+        throws AuthenticationException {
         String[] tenants = tenantsResolver.getTenants();
         if (ArrayUtils.isEmpty(tenants)) {
             throw new AuthenticationServiceException("No tenants resolved for authentication");
         }
         try {
-            Authentication auth =
+            Authentication profileAuth =
                 authenticationManager.authenticateUser(tenants, username, authentication.getCredentials().toString());
-            // TODO: Set object for backwards compatibility
-            return new ProfileUserDetails(auth.getProfile(), authentication);
+
+            return new ProfileUserDetails(profileAuth, authentication);
         } catch (Exception e) {
-            // TODO: Log?
             throw new AuthenticationServiceException("Error authenticating user " + username, e);
         }
     }
