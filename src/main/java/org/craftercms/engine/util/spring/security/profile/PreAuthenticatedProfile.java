@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.craftercms.engine.security;
+package org.craftercms.engine.util.spring.security.profile;
 
 import org.craftercms.profile.api.Profile;
 import org.craftercms.security.authentication.Authentication;

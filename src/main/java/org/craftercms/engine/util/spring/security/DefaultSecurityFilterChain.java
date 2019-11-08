@@ -18,42 +18,36 @@
 package org.craftercms.engine.util.spring.security;
 
 import java.util.List;
+import java.util.stream.Stream;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author joseross
  */
-public class EngineSecurityFilterChain implements SecurityFilterChain {
+public class DefaultSecurityFilterChain implements SecurityFilterChain {
 
     protected boolean securityEnabled;
 
-    protected String[] urlsToExclude;
+    protected List<AntPathRequestMatcher> urlsToExclude;
 
     protected List<Filter> filters;
 
-    public EngineSecurityFilterChain(final boolean securityEnabled, final String[] urlsToExclude,
-                                     final List<Filter> filters) {
+    public DefaultSecurityFilterChain(final boolean securityEnabled, final String[] urlsToExclude,
+                                      final List<Filter> filters) {
         this.securityEnabled = securityEnabled;
-        this.urlsToExclude = urlsToExclude;
+        this.urlsToExclude = Stream.of(urlsToExclude).map(AntPathRequestMatcher::new).collect(toList());
         this.filters = filters;
     }
 
     @Override
     public boolean matches(final HttpServletRequest request) {
-        if (!securityEnabled) {
-            return false;
-        }
-        for (String url : urlsToExclude) {
-            AntPathRequestMatcher matcher = new AntPathRequestMatcher(url);
-            if (matcher.matches(request)) {
-                return false;
-            }
-        }
-        return true;
+        return securityEnabled && urlsToExclude.stream().noneMatch(matcher -> matcher.matches(request));
     }
 
     @Override

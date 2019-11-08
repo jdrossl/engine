@@ -655,7 +655,7 @@
 
 <!--    <bean id="crafter.providerLoginSupport" class="org.craftercms.security.social.impl.ProviderLoginSupportImpl">-->
 <!--        <property name="connectionFactoryLocator" ref="crafter.connectionFactoryLocator"/>-->
-<!--        <property name="authenticationManager" ref="crafter.authenticationManager"/>-->
+<!--        <property name="authenticationManager" ref="crafter.crafter.authenticationManager"/>-->
 <!--        <property name="profileService" ref="crafter.profileServiceRestClient"/>-->
 <!--        <property name="textEncryptor" ref="crafter.textEncryptor"/>-->
 <!--    </bean>-->

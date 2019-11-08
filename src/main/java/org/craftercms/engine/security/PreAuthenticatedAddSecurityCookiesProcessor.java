@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.craftercms.commons.http.RequestContext;
+import org.craftercms.engine.util.spring.security.profile.PreAuthenticatedProfile;
 import org.craftercms.security.authentication.Authentication;
 import org.craftercms.security.processors.impl.AddSecurityCookiesProcessor;
 import org.craftercms.security.utils.SecurityUtils;
@@ -31,6 +32,7 @@ import org.craftercms.security.utils.SecurityUtils;
  *
  * @author avasquez
  */
+@Deprecated
 public class PreAuthenticatedAddSecurityCookiesProcessor extends AddSecurityCookiesProcessor {
 
     @Override

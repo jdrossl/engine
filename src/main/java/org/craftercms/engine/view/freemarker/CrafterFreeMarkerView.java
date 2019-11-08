@@ -40,7 +40,7 @@ import org.craftercms.engine.service.SiteItemService;
 import org.craftercms.engine.service.context.SiteContext;
 import org.craftercms.engine.util.freemarker.HttpRequestHashModel;
 import org.craftercms.engine.util.spring.ApplicationContextAccessor;
-import org.craftercms.engine.util.spring.security.ProfileUserDetails;
+import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -73,6 +73,7 @@ public class CrafterFreeMarkerView extends FreeMarkerView {
     public static final String KEY_APP_CONTEXT = "applicationContext";
     public static final String KEY_COOKIES_CAP = "Cookies";
     public static final String KEY_COOKIES = "cookies";
+    public static final String KEY_AUTH_TOKEN = "authToken";
     public static final String KEY_AUTH_CAP = "Authentication";
     public static final String KEY_AUTH = "authentication";
     public static final String KEY_PROFILE_CAP = "Profile";
@@ -182,14 +183,16 @@ public class CrafterFreeMarkerView extends FreeMarkerView {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
-            templateModel.put("user", auth);
+            templateModel.put(KEY_AUTH_TOKEN, auth);
+
+            // for backwards compatibility with Profile ...
 
             if (auth.getPrincipal() instanceof ProfileUserDetails) {
                 ProfileUserDetails details = (ProfileUserDetails) auth.getPrincipal();
                 templateModel.put(KEY_AUTH_CAP, details.getAuthentication());
                 templateModel.put(KEY_AUTH, details.getAuthentication());
-                templateModel.put(KEY_PROFILE_CAP, details.getAuthentication().getProfile());
-                templateModel.put(KEY_PROFILE, details.getAuthentication().getProfile());
+                templateModel.put(KEY_PROFILE_CAP, details.getProfile());
+                templateModel.put(KEY_PROFILE, details.getProfile());
             }
         }
 

@@ -28,8 +28,7 @@ import org.craftercms.engine.model.SiteItem;
 import org.craftercms.engine.scripting.impl.GroovyScript;
 import org.craftercms.engine.service.context.SiteContext;
 import org.craftercms.engine.util.spring.ApplicationContextAccessor;
-import org.craftercms.engine.util.spring.security.ProfileUserDetails;
-import org.craftercms.profile.api.Profile;
+import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -63,6 +62,7 @@ public class GroovyScriptUtils {
     public static final String VARIABLE_CONTENT_MODEL = "contentModel";
     public static final String VARIABLE_AUTH = "authentication";
     public static final String VARIABLE_PROFILE = "profile";
+    public static final String VARIABLE_AUTH_TOKEN = "authToken";
     public static final String VARIABLE_SITE_CONTEXT = "siteContext";
     public static final String VARIABLE_SITE_CONFIG = "siteConfig";
     public static final String VARIABLE_FILTER_CHAIN = "filterChain";
@@ -157,15 +157,17 @@ public class GroovyScriptUtils {
 
     private static void addSecurityVariables(Map<String, Object> variables) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        variables.put(VARIABLE_AUTH_TOKEN, auth);
 
-        variables.put("user", auth);
+        // for backwards compatibility with Profile ...
+
         variables.put(VARIABLE_AUTH, null);
         variables.put(VARIABLE_PROFILE, null);
 
         if (auth != null && auth.getPrincipal() instanceof ProfileUserDetails) {
             ProfileUserDetails details = (ProfileUserDetails) auth.getPrincipal();
             variables.put(VARIABLE_AUTH, details.getAuthentication());
-            variables.put(VARIABLE_PROFILE, details.getAuthentication().getProfile());
+            variables.put(VARIABLE_PROFILE, details.getProfile());
         }
     }
 

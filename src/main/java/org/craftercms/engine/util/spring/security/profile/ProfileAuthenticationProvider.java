@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.craftercms.engine.util.spring.security;
+package org.craftercms.engine.util.spring.security.profile;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
 import org.craftercms.security.authentication.Authentication;
 import org.craftercms.security.authentication.AuthenticationManager;
 import org.craftercms.security.utils.tenant.TenantsResolver;

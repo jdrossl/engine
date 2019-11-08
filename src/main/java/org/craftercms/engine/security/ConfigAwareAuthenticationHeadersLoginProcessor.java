@@ -31,6 +31,7 @@ import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.craftercms.commons.http.RequestContext;
 import org.craftercms.engine.util.ConfigUtils;
+import org.craftercms.engine.util.spring.security.profile.PreAuthenticatedProfile;
 import org.craftercms.profile.api.Profile;
 import org.craftercms.security.authentication.Authentication;
 import org.craftercms.security.processors.RequestSecurityProcessorChain;
