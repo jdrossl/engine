@@ -53,7 +53,7 @@ public class ProfileUserDetailsService implements UserDetailsService {
         for (String tenant : tenants) {
             try {
                 Profile profile = profileService.getProfileByUsername(tenant, username);
-                return new ProfileUserDetails(profile);
+                return new ProfileUser(profile);
             } catch (ProfileException e) {
                 logger.debug("Profile not found for '{}' in tenant '{}', will try next tenant", username, tenant);
             }

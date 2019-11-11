@@ -125,6 +125,7 @@
         <!-- Include targeting authentication filter -->
         <ref bean="crafter.targetingAuthenticationFilter"/>
 
+        <ref bean="crafter.profileHeadersPreAuthenticatedFilter"/>
         <ref bean="crafter.formLoginFilter"/>
         <ref bean="crafter.rememberMeFilter"/>
         <ref bean="crafter.requestCacheFilter"/>
@@ -135,6 +136,7 @@
     </util:list>
 
     <util:list id="crafter.authenticationProviders">
+        <ref bean="crafter.profilePreAuthenticationProvider"/>
         <ref bean="crafter.profileAuthenticationProvider"/>
         <ref bean="crafter.rememberMeAuthenticationProvider"/>
 

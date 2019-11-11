@@ -28,7 +28,7 @@ import org.craftercms.engine.model.SiteItem;
 import org.craftercms.engine.scripting.impl.GroovyScript;
 import org.craftercms.engine.service.context.SiteContext;
 import org.craftercms.engine.util.spring.ApplicationContextAccessor;
-import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
+import org.craftercms.engine.util.spring.security.profile.ProfileUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -164,8 +164,8 @@ public class GroovyScriptUtils {
         variables.put(VARIABLE_AUTH, null);
         variables.put(VARIABLE_PROFILE, null);
 
-        if (auth != null && auth.getPrincipal() instanceof ProfileUserDetails) {
-            ProfileUserDetails details = (ProfileUserDetails) auth.getPrincipal();
+        if (auth != null && auth.getPrincipal() instanceof ProfileUser) {
+            ProfileUser details = (ProfileUser) auth.getPrincipal();
             variables.put(VARIABLE_AUTH, details.getAuthentication());
             variables.put(VARIABLE_PROFILE, details.getProfile());
         }

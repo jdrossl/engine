@@ -21,14 +21,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.craftercms.commons.http.RequestContext;
-import org.craftercms.engine.util.spring.security.profile.PreAuthenticatedProfile;
+import org.craftercms.engine.util.spring.security.targeting.TargetingAuthentication;
 import org.craftercms.security.authentication.Authentication;
 import org.craftercms.security.processors.impl.AddSecurityCookiesProcessor;
 import org.craftercms.security.utils.SecurityUtils;
 
 /**
  * Extension of {@link org.craftercms.security.processors.impl.AddSecurityCookiesProcessor} that avoids adding
- * the cookies if the authentication is a {@link PreAuthenticatedProfile}.
+ * the cookies if the authentication is a {@link TargetingAuthentication}.
  *
  * @author avasquez
  */
@@ -49,7 +49,7 @@ public class PreAuthenticatedAddSecurityCookiesProcessor extends AddSecurityCook
         @Override
         public void addCookies() {
             Authentication auth = SecurityUtils.getAuthentication(request);
-            if (auth instanceof PreAuthenticatedProfile) {
+            if (auth instanceof TargetingAuthentication) {
                 // Delete cookies if they still exist from a previous authentication
                 deleteTicketCookie();
                 deleteProfileLastModifiedCookie();

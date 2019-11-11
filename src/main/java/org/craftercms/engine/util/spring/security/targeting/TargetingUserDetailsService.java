@@ -19,7 +19,7 @@ package org.craftercms.engine.util.spring.security.targeting;
 
 import java.util.Collection;
 
-import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
+import org.craftercms.engine.util.spring.security.profile.ProfileUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,6 +33,7 @@ public class TargetingUserDetailsService extends PreAuthenticatedGrantedAuthorit
     @Override
     protected UserDetails createUserDetails(final Authentication token,
                                             final Collection<? extends GrantedAuthority> authorities) {
-        return (ProfileUserDetails) token.getPrincipal();
+        return (ProfileUser) token.getPrincipal();
     }
+
 }

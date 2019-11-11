@@ -79,6 +79,7 @@
     <!-- Authentication -->
 
     <util:list id="crafter.authenticationProviders">
+        <ref bean="crafter.profilePreAuthenticationProvider"/>
         <ref bean="crafter.profileAuthenticationProvider"/>
         <ref bean="crafter.rememberMeAuthenticationProvider"/>
     </util:list>
@@ -182,6 +183,21 @@
         <constructor-arg ref="crafter.profileServiceRestClient"/>
     </bean>
 
+    <bean id="crafter.profilePreAuthenticationProvider"
+          class="org.craftercms.engine.util.spring.security.profile.PreAuthenticatedProfileProvider">
+        <constructor-arg ref="crafter.profileAuthenticationManager"/>
+    </bean>
+
+    <bean id="crafter.profileHeadersPreAuthenticatedFilter"
+          class="org.craftercms.engine.util.spring.security.profile.ProfileHeadersPreAuthenticatedFilter">
+        <constructor-arg ref="crafter.profileServiceRestClient"/>
+        <constructor-arg ref="crafter.tenantServiceRestClient"/>
+        <constructor-arg ref="crafter.tenantsResolver"/>
+        <property name="authenticationManager" ref="crafter.authenticationManager"/>
+        <!-- TODO: Extract -->
+        <property name="tokenExpectedValue" value="some_secret"/>
+    </bean>
+
     <!-- Security Filters -->
 
     <bean id="crafter.securityContextFilter"
@@ -247,6 +263,7 @@
     <util:list id="crafter.securityFilters">
         <ref bean="crafter.securityContextFilter"/>
         <ref bean="crafter.logoutFilter"/>
+        <ref bean="crafter.profileHeadersPreAuthenticatedFilter"/>
         <ref bean="crafter.formLoginFilter"/>
         <ref bean="crafter.rememberMeFilter"/>
         <ref bean="crafter.requestCacheFilter"/>

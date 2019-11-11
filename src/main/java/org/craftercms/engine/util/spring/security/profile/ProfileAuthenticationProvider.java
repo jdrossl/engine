@@ -18,7 +18,6 @@
 package org.craftercms.engine.util.spring.security.profile;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
 import org.craftercms.security.authentication.Authentication;
 import org.craftercms.security.authentication.AuthenticationManager;
 import org.craftercms.security.utils.tenant.TenantsResolver;
@@ -54,17 +53,27 @@ public class ProfileAuthenticationProvider extends AbstractUserDetailsAuthentica
     protected UserDetails retrieveUser(final String username,
                                        final UsernamePasswordAuthenticationToken authentication)
         throws AuthenticationException {
-        String[] tenants = tenantsResolver.getTenants();
-        if (ArrayUtils.isEmpty(tenants)) {
-            throw new AuthenticationServiceException("No tenants resolved for authentication");
-        }
+        String[] tenants = getTenants();
         try {
             Authentication profileAuth =
                 authenticationManager.authenticateUser(tenants, username, authentication.getCredentials().toString());
 
-            return new ProfileUserDetails(profileAuth, authentication);
+            return createPrincipal(authentication, profileAuth);
         } catch (Exception e) {
             throw new AuthenticationServiceException("Error authenticating user " + username, e);
         }
     }
+
+    protected String[] getTenants() {
+        String[] tenants = tenantsResolver.getTenants();
+        if (ArrayUtils.isEmpty(tenants)) {
+            throw new AuthenticationServiceException("No tenants resolved for authentication");
+        }
+        return tenants;
+    }
+
+    protected ProfileUser createPrincipal(UsernamePasswordAuthenticationToken token, Authentication auth) {
+        return new ProfileUser(auth, token);
+    }
+
 }

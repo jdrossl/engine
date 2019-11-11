@@ -17,40 +17,41 @@
 
 package org.craftercms.engine.util.spring.security.profile;
 
+import java.util.Map;
 import java.util.Objects;
 
+import org.craftercms.engine.util.spring.security.CustomUser;
 import org.craftercms.profile.api.Profile;
 import org.craftercms.security.authentication.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import static java.util.stream.Collectors.toSet;
 
 /**
  * @author joseross
  */
-public class ProfileUserDetails extends User {
+public class ProfileUser extends CustomUser {
 
     protected Authentication authentication;
 
     protected Profile profile;
 
-    public ProfileUserDetails(final Authentication auth) {
+    public ProfileUser(final Authentication auth) {
         this(auth.getProfile(), null);
         this.authentication = auth;
     }
 
-    public ProfileUserDetails(final Authentication auth, final UsernamePasswordAuthenticationToken token) {
+    public ProfileUser(final Authentication auth, final UsernamePasswordAuthenticationToken token) {
         this(auth.getProfile(), token);
         this.authentication = auth;
     }
 
-    public ProfileUserDetails(final Profile profile) {
+    public ProfileUser(final Profile profile) {
         this(profile, null);
     }
 
-    public ProfileUserDetails(final Profile profile, final UsernamePasswordAuthenticationToken token) {
+    public ProfileUser(final Profile profile, final UsernamePasswordAuthenticationToken token) {
         // TODO: Encrypt password?
         super(profile.getUsername(), token != null? token.getCredentials().toString() : profile.getUsername(),
             profile.isEnabled(), true, true, true,
@@ -67,17 +68,32 @@ public class ProfileUserDetails extends User {
     }
 
     @Override
+    public <T> T getAttribute(final String name) {
+        return profile.getAttribute(name);
+    }
+
+    @Override
+    public void setAttributes(final Map<String, Object> attributes) {
+        profile.setAttributes(attributes);
+    }
+
+    @Override
+    public void setAttribute(final String name, final Object value) {
+        profile.setAttribute(name, value);
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ProfileUserDetails)) {
+        if (!(o instanceof ProfileUser)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
-        final ProfileUserDetails details = (ProfileUserDetails)o;
+        final ProfileUser details = (ProfileUser)o;
         return Objects.equals(profile, details.profile);
     }
 

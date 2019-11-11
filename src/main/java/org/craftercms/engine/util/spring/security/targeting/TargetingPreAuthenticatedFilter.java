@@ -26,8 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.bson.types.ObjectId;
 import org.craftercms.engine.controller.rest.preview.ProfileRestController;
-import org.craftercms.engine.util.spring.security.profile.PreAuthenticatedProfile;
-import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
+import org.craftercms.engine.util.spring.security.profile.ProfileUser;
 import org.craftercms.profile.api.Profile;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
@@ -76,7 +75,7 @@ public class TargetingPreAuthenticatedFilter extends AbstractPreAuthenticatedPro
 
                 profile.setAttributes(customAttributes);
 
-                return new ProfileUserDetails(new PreAuthenticatedProfile(profile));
+                return new ProfileUser(new TargetingAuthentication(profile));
             }
         }
         if (logger.isDebugEnabled()) {

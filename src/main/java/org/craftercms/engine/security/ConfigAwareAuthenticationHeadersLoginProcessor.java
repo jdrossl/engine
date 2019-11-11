@@ -31,7 +31,7 @@ import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.craftercms.commons.http.RequestContext;
 import org.craftercms.engine.util.ConfigUtils;
-import org.craftercms.engine.util.spring.security.profile.PreAuthenticatedProfile;
+import org.craftercms.engine.util.spring.security.targeting.TargetingAuthentication;
 import org.craftercms.profile.api.Profile;
 import org.craftercms.security.authentication.Authentication;
 import org.craftercms.security.processors.RequestSecurityProcessorChain;
@@ -96,7 +96,7 @@ public class ConfigAwareAuthenticationHeadersLoginProcessor extends Authenticati
             addAttributes(profile, request, config);
             addRoles(profile, request, config);
 
-            SecurityUtils.setAuthentication(request, new PreAuthenticatedProfile(profile));
+            SecurityUtils.setAuthentication(request, new TargetingAuthentication(profile));
 
             processorChain.processRequest(context);
         } else {

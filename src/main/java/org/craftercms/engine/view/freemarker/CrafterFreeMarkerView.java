@@ -40,7 +40,7 @@ import org.craftercms.engine.service.SiteItemService;
 import org.craftercms.engine.service.context.SiteContext;
 import org.craftercms.engine.util.freemarker.HttpRequestHashModel;
 import org.craftercms.engine.util.spring.ApplicationContextAccessor;
-import org.craftercms.engine.util.spring.security.profile.ProfileUserDetails;
+import org.craftercms.engine.util.spring.security.profile.ProfileUser;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -187,8 +187,8 @@ public class CrafterFreeMarkerView extends FreeMarkerView {
 
             // for backwards compatibility with Profile ...
 
-            if (auth.getPrincipal() instanceof ProfileUserDetails) {
-                ProfileUserDetails details = (ProfileUserDetails) auth.getPrincipal();
+            if (auth.getPrincipal() instanceof ProfileUser) {
+                ProfileUser details = (ProfileUser) auth.getPrincipal();
                 templateModel.put(KEY_AUTH_CAP, details.getAuthentication());
                 templateModel.put(KEY_AUTH, details.getAuthentication());
                 templateModel.put(KEY_PROFILE_CAP, details.getProfile());
