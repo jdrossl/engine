@@ -20,6 +20,7 @@ package org.craftercms.engine.util.spring.security;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -47,12 +48,41 @@ public class CustomUser extends User {
         return (T) attributes.get(name);
     }
 
-    public void setAttributes(final Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
     public void setAttribute(String name, Object value) {
         attributes.put(name, value);
     }
 
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(final Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CustomUser)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final CustomUser that = (CustomUser)o;
+        return Objects.equals(attributes, that.attributes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), attributes);
+    }
+
+    @Override
+    public String toString() {
+        return "CustomUser{" + "attributes=" + attributes + '}';
+    }
+    
 }

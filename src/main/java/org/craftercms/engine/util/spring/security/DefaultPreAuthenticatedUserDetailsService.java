@@ -15,23 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.craftercms.engine.util.spring.security.targeting;
+package org.craftercms.engine.util.spring.security;
 
-import java.util.Collections;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService;
 
 /**
  * @author joseross
  */
-public class TargetingAuthenticationDetailsSource extends WebAuthenticationDetailsSource {
+public class DefaultPreAuthenticatedUserDetailsService extends PreAuthenticatedGrantedAuthoritiesUserDetailsService {
 
     @Override
-    public WebAuthenticationDetails buildDetails(final HttpServletRequest context) {
-        return new PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails(context, Collections.emptySet());
+    protected UserDetails createUserDetails(final Authentication token,
+                                            final Collection<? extends GrantedAuthority> authorities) {
+        return (UserDetails) token.getPrincipal();
     }
 
 }

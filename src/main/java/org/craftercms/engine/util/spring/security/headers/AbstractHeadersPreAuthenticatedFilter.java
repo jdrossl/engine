@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.craftercms.engine.util.ConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
@@ -48,6 +49,10 @@ public abstract class AbstractHeadersPreAuthenticatedFilter extends AbstractPreA
     public static final String HEADERS_TOKEN_CONFIG_KEY = HEADERS_CONFIG_KEY + ".token";
     public static final String HEADERS_ATTRS_CONFIG_KEY = HEADERS_CONFIG_KEY + ".attributes";
     public static final String HEADERS_GROUPS_CONFIG_KEY = HEADERS_CONFIG_KEY + ".groups";
+
+    public static final String NAME_CONFIG_KEY = "name";
+    public static final String FIELD_CONFIG_KEY = "field";
+    public static final String ROLE_CONFIG_KEY = "role";
 
     protected String headerPrefix = DEFAULT_HEADER_PREFIX;
     protected String usernameHeaderName = DEFAULT_USERNAME_HEADER_NAME;
@@ -104,6 +109,8 @@ public abstract class AbstractHeadersPreAuthenticatedFilter extends AbstractPreA
 
     protected abstract boolean isEnabled();
 
+    protected abstract Class<?> getSupportedPrincipalClass();
+
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
         throws IOException, ServletException {
@@ -114,6 +121,14 @@ public abstract class AbstractHeadersPreAuthenticatedFilter extends AbstractPreA
             logger.debug("Filter '{}' is disabled", getClass().getSimpleName());
             chain.doFilter(request, response);
         }
+    }
+
+    @Override
+    protected boolean principalChanged(final HttpServletRequest request, final Authentication currentAuthentication) {
+        if (currentAuthentication.getPrincipal().getClass().equals(getSupportedPrincipalClass())) {
+            return super.principalChanged(request, currentAuthentication);
+        }
+        return false;
     }
 
 }

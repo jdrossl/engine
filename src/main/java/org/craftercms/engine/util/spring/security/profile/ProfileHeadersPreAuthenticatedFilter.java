@@ -35,7 +35,7 @@ import org.craftercms.security.utils.tenant.TenantsResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNoneEmpty;
 
 /**
  * @author joseross
@@ -61,8 +61,9 @@ public class ProfileHeadersPreAuthenticatedFilter extends AbstractHeadersPreAuth
     @Override
     protected Object getPreAuthenticatedPrincipal(final HttpServletRequest request) {
         String username = request.getHeader(usernameHeaderName);
+        String email = request.getHeader(emailHeaderName);
 
-        if (isNotEmpty(username)) {
+        if (isNoneEmpty(username, email)) {
             try {
                 String[] tenantNames = tenantsResolver.getTenants();
                 Tenant tenant = getSsoEnabledTenant(tenantNames);
@@ -96,6 +97,11 @@ public class ProfileHeadersPreAuthenticatedFilter extends AbstractHeadersPreAuth
     protected boolean isEnabled() {
         // always enabled for backward compatibility
         return true;
+    }
+
+    @Override
+    protected Class<?> getSupportedPrincipalClass() {
+        return ProfileUser.class;
     }
 
     protected Tenant getSsoEnabledTenant(String[] tenantNames) throws ProfileException {
