@@ -30,11 +30,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit tests for {@link org.craftercms.engine.security.ConfigAwareLoginFailureHandler}.
+ * Unit tests for {@link ConfigAwareAuthenticationFailureHandler}.
  *
  * @author avasquez
  */
-public class ConfigAwareLoginFailureHandlerTest extends ConfigAwareTestBase {
+public class ConfigAwareAuthenticationFailureHandlerTest extends ConfigAwareTestBase {
 
     private ConfigAwareAuthenticationFailureHandler handler;
 

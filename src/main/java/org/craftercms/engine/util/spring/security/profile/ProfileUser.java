@@ -53,7 +53,7 @@ public class ProfileUser extends CustomUser {
 
     public ProfileUser(final Profile profile, final UsernamePasswordAuthenticationToken token) {
         // TODO: Encrypt password?
-        super(profile.getUsername(), token != null? token.getCredentials().toString() : profile.getUsername(),
+        super(profile.getUsername(), token != null? token.getCredentials().toString() : "N/A",
             profile.isEnabled(), true, true, true,
             profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(toSet()));
         this.profile = profile;

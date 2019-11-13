@@ -20,11 +20,10 @@ package org.craftercms.engine.util.spring.security.profile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.craftercms.engine.util.spring.security.headers.AbstractHeadersPreAuthenticatedFilter;
+import org.craftercms.engine.util.spring.security.headers.AbstractHeadersAuthenticationFilter;
 import org.craftercms.profile.api.AttributeDefinition;
 import org.craftercms.profile.api.Profile;
 import org.craftercms.profile.api.Tenant;
@@ -40,9 +39,9 @@ import static org.apache.commons.lang3.StringUtils.isNoneEmpty;
 /**
  * @author joseross
  */
-public class ProfileHeadersPreAuthenticatedFilter extends AbstractHeadersPreAuthenticatedFilter {
+public class ProfileHeadersAuthenticationFilter extends AbstractHeadersAuthenticationFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProfileHeadersPreAuthenticatedFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProfileHeadersAuthenticationFilter.class);
 
     protected ProfileService profileService;
 
@@ -50,16 +49,21 @@ public class ProfileHeadersPreAuthenticatedFilter extends AbstractHeadersPreAuth
 
     protected TenantsResolver tenantsResolver;
 
-    public ProfileHeadersPreAuthenticatedFilter(final ProfileService profileService,
-                                                final TenantService tenantService,
-                                                final TenantsResolver tenantsResolver) {
+    public ProfileHeadersAuthenticationFilter(final ProfileService profileService,
+                                              final TenantService tenantService,
+                                              final TenantsResolver tenantsResolver) {
+        // always enabled, for backwards compatibility
+        super(null);
+        setAlwaysEnabled(true);
+        setSupportedPrincipalClass(ProfileUser.class);
+
         this.profileService = profileService;
         this.tenantService = tenantService;
         this.tenantsResolver = tenantsResolver;
     }
 
     @Override
-    protected Object getPreAuthenticatedPrincipal(final HttpServletRequest request) {
+    protected Object doGetPreAuthenticatedPrincipal(final HttpServletRequest request) {
         String username = request.getHeader(usernameHeaderName);
         String email = request.getHeader(emailHeaderName);
 
@@ -85,23 +89,6 @@ public class ProfileHeadersPreAuthenticatedFilter extends AbstractHeadersPreAuth
         }
 
         return null;
-    }
-
-    @Override
-    protected Object getPreAuthenticatedCredentials(final HttpServletRequest request) {
-        // TODO: ok to return a random value?
-        return UUID.randomUUID().toString();
-    }
-
-    @Override
-    protected boolean isEnabled() {
-        // always enabled for backward compatibility
-        return true;
-    }
-
-    @Override
-    protected Class<?> getSupportedPrincipalClass() {
-        return ProfileUser.class;
     }
 
     protected Tenant getSsoEnabledTenant(String[] tenantNames) throws ProfileException {

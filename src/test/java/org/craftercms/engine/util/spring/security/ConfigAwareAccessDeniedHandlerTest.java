@@ -30,7 +30,7 @@ import org.springframework.security.access.AccessDeniedException;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit tests for {@link org.craftercms.engine.security.ConfigAwareAccessDeniedHandler}.
+ * Unit tests for {@link ConfigAwareAccessDeniedHandler}.
  *
  * @author avasquez
  */

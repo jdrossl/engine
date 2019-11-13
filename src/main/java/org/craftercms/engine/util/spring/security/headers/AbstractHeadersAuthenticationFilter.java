@@ -17,27 +17,21 @@
 
 package org.craftercms.engine.util.spring.security.headers;
 
-import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.craftercms.engine.util.ConfigUtils;
+import org.craftercms.engine.util.spring.security.ConfigAwarePreAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
  * @author joseross
  */
-public abstract class AbstractHeadersPreAuthenticatedFilter extends AbstractPreAuthenticatedProcessingFilter {
+public abstract class AbstractHeadersAuthenticationFilter extends ConfigAwarePreAuthenticationFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractHeadersPreAuthenticatedFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractHeadersAuthenticationFilter.class);
 
     public static final String DEFAULT_HEADER_PREFIX = "MELLON_";
     public static final String DEFAULT_USERNAME_HEADER_NAME = DEFAULT_HEADER_PREFIX + "username";
@@ -59,9 +53,10 @@ public abstract class AbstractHeadersPreAuthenticatedFilter extends AbstractPreA
     protected String emailHeaderName = DEFAULT_EMAIL_HEADER_NAME;
     protected String groupsHeaderName = DEFAULT_GROUPS_HEADER_NAME;
     protected String tokenHeaderName = DEFAULT_TOKEN_HEADER_NAME;
-    protected String tokenExpectedValue;
+    protected String defaultTokenValue;
 
-    public AbstractHeadersPreAuthenticatedFilter() {
+    public AbstractHeadersAuthenticationFilter(String enabledConfigKey) {
+        super(enabledConfigKey);
         setCheckForPrincipalChanges(true);
     }
 
@@ -85,8 +80,18 @@ public abstract class AbstractHeadersPreAuthenticatedFilter extends AbstractPreA
         this.tokenHeaderName = tokenHeaderName;
     }
 
-    public void setTokenExpectedValue(final String tokenExpectedValue) {
-        this.tokenExpectedValue = tokenExpectedValue;
+    public void setDefaultTokenValue(final String defaultTokenValue) {
+        this.defaultTokenValue = defaultTokenValue;
+    }
+
+    protected abstract Object doGetPreAuthenticatedPrincipal(final HttpServletRequest request);
+
+    @Override
+    protected Object getPreAuthenticatedPrincipal(final HttpServletRequest request) {
+        if (hasValidToken(request)) {
+            return doGetPreAuthenticatedPrincipal(request);
+        }
+        return null;
     }
 
     protected String getTokenExpectedValue() {
@@ -94,41 +99,18 @@ public abstract class AbstractHeadersPreAuthenticatedFilter extends AbstractPreA
         if (config != null && config.containsKey(HEADERS_TOKEN_CONFIG_KEY)) {
             return config.getString(HEADERS_TOKEN_CONFIG_KEY);
         }
-        return tokenExpectedValue;
+        return defaultTokenValue;
     }
 
     protected boolean hasValidToken(HttpServletRequest request) {
+        logger.debug("Checking security token from request headers");
         String tokenHeaderValue = request.getHeader(tokenHeaderName);
         if (StringUtils.equals(tokenHeaderValue, getTokenExpectedValue())) {
             return true;
         } else {
-            logger.warn("Token mismatch during authentication from '{}'", request.getRemoteAddr());
+            logger.warn("Security token mismatch during authentication from '{}'", request.getRemoteAddr());
             return false;
         }
-    }
-
-    protected abstract boolean isEnabled();
-
-    protected abstract Class<?> getSupportedPrincipalClass();
-
-    @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
-        throws IOException, ServletException {
-        if (isEnabled() && hasValidToken((HttpServletRequest) request)) {
-            logger.debug("Filter '{}' is enabled, processing request", getClass().getSimpleName());
-            super.doFilter(request, response, chain);
-        } else {
-            logger.debug("Filter '{}' is disabled", getClass().getSimpleName());
-            chain.doFilter(request, response);
-        }
-    }
-
-    @Override
-    protected boolean principalChanged(final HttpServletRequest request, final Authentication currentAuthentication) {
-        if (currentAuthentication.getPrincipal().getClass().equals(getSupportedPrincipalClass())) {
-            return super.principalChanged(request, currentAuthentication);
-        }
-        return false;
     }
 
 }

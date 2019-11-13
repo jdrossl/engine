@@ -27,12 +27,15 @@ import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.craftercms.engine.util.ConfigUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.WebAttributes;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 /**
+ * Implementation of {@link AccessDeniedHandler} that uses site config
+ *
  * @author joseross
+ * @since 3.1.5
  */
-public class ConfigAwareAccessDeniedHandler extends AccessDeniedHandlerImpl {
+public class ConfigAwareAccessDeniedHandler implements AccessDeniedHandler {
 
     public static final String ACCESS_DENIED_ERROR_PAGE_URL_KEY = "security.accessDenied.errorPageUrl";
 
@@ -50,7 +53,8 @@ public class ConfigAwareAccessDeniedHandler extends AccessDeniedHandlerImpl {
         return errorPage;
     }
 
-    // Copied because the super class doesn't use a getter :(
+    // Copied from Spring's AccessDeniedHandlerImpl
+    // Can't be reused because the field is private and it's used directly without a getter
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException,

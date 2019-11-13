@@ -626,7 +626,7 @@
         <entry key="elasticsearch" value-ref="crafter.elasticsearchService"/>
         <entry key="breadcrumbBuilder" value-ref="crafter.breadcrumbBuilder"/>
         <entry key="globalProperties" value-ref="crafter.propertyResolver"/>
-<!--        <entry key="tenantsResolver" value-ref="crafter.tenantsResolver"/>-->
+        <entry key="tenantsResolver" value-ref="crafter.tenantsResolver"/>
         <entry key="modePreview" value="#{T(java.lang.Boolean).valueOf(${crafter.engine.preview})}"/>
         <entry key="crafterEnv" value="${crafter.engine.environment}"/>
     </util:map>
@@ -642,23 +642,24 @@
     <!--									-->
     <!-- ////////////////////////////////// -->
 
-<!--    <bean id="crafter.connectionFactoryLocator"-->
-<!--          class="org.craftercms.engine.util.spring.social.ConfigAwareConnectionFactoryLocator">-->
-<!--        <property name="defaultLocator" ref="crafter.defaultConnectionFactoryLocator"/>-->
-<!--        <property name="cacheTemplate" ref="crafter.cacheTemplate"/>-->
-<!--    </bean>-->
+    <bean id="crafter.connectionFactoryLocator"
+          class="org.craftercms.engine.util.spring.social.ConfigAwareConnectionFactoryLocator">
+        <property name="defaultLocator" ref="crafter.defaultConnectionFactoryLocator"/>
+        <property name="cacheTemplate" ref="crafter.cacheTemplate"/>
+    </bean>
 
-<!--    <bean id="crafter.defaultConnectionFactoryLocator"-->
-<!--          class="org.springframework.social.connect.support.ConnectionFactoryRegistry">-->
-<!--        &lt;!&ndash; Override to specify default connection factories &ndash;&gt;-->
-<!--    </bean>-->
+    <bean id="crafter.defaultConnectionFactoryLocator"
+          class="org.springframework.social.connect.support.ConnectionFactoryRegistry">
+        <!-- Override to specify default connection factories -->
+    </bean>
 
-<!--    <bean id="crafter.providerLoginSupport" class="org.craftercms.security.social.impl.ProviderLoginSupportImpl">-->
-<!--        <property name="connectionFactoryLocator" ref="crafter.connectionFactoryLocator"/>-->
-<!--        <property name="authenticationManager" ref="crafter.crafter.authenticationManager"/>-->
-<!--        <property name="profileService" ref="crafter.profileServiceRestClient"/>-->
-<!--        <property name="textEncryptor" ref="crafter.textEncryptor"/>-->
-<!--    </bean>-->
+    <bean id="crafter.providerLoginSupport"
+          class="org.craftercms.engine.util.spring.security.profile.SecurityContextAwareProviderLoginSupport">
+        <property name="connectionFactoryLocator" ref="crafter.connectionFactoryLocator"/>
+        <property name="authenticationManager" ref="crafter.profileAuthenticationManager"/>
+        <property name="profileService" ref="crafter.profileServiceRestClient"/>
+        <property name="textEncryptor" ref="crafter.textEncryptor"/>
+    </bean>
 
     <!-- ////////////////////////////////// -->
     <!--								 	-->

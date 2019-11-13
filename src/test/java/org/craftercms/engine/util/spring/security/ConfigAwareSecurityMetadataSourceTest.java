@@ -17,44 +17,57 @@
 
 package org.craftercms.engine.util.spring.security;
 
+import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.craftercms.commons.http.RequestContext;
+import org.craftercms.core.util.cache.CacheTemplate;
+import org.craftercms.engine.test.utils.CacheTemplateMockUtils;
 import org.craftercms.engine.test.utils.ConfigAwareTestBase;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.mockito.Mock;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.web.FilterInvocation;
 
-import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for {@link ConfigAwareLoginUrlAuthenticationEntryPoint}.
+ * Unit tests for {@link ConfigAwareSecurityMetadataSource}.
  *
  * @author avasquez
  */
-public class ConfigAwareLoginUrlAuthenticationEntryPointTest extends ConfigAwareTestBase {
+public class ConfigAwareSecurityMetadataSourceTest extends ConfigAwareTestBase {
 
-    private ConfigAwareLoginUrlAuthenticationEntryPoint entryPoint;
+    private ConfigAwareSecurityMetadataSource metadataSource;
+    @Mock
+    private CacheTemplate cacheTemplate;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
 
-        entryPoint = new ConfigAwareLoginUrlAuthenticationEntryPoint("/login");
+        CacheTemplateMockUtils.setUpWithNoCaching(cacheTemplate);
+
+        metadataSource = new ConfigAwareSecurityMetadataSource(cacheTemplate);
     }
 
     @Test
-    public void testProcessRequest() throws Exception {
+    public void testProcessRequest() {
         HttpServletRequest request = RequestContext.getCurrent().getRequest();
-        HttpServletResponse response = RequestContext.getCurrent().getResponse();
-        entryPoint.commence(request, response, new InsufficientAuthenticationException(""));
 
-        assertThat(((MockHttpServletResponse)RequestContext.getCurrent().getResponse()).getRedirectedUrl(),
-            endsWith(config.getString(ConfigAwareLoginUrlAuthenticationEntryPoint.LOGIN_FORM_URL_KEY)));
+        FilterInvocation invocation = mock(FilterInvocation.class);
+        when(invocation.getRequest()).thenReturn(request);
+
+        Collection<ConfigAttribute> attributes = metadataSource.getAttributes(invocation);
+
+        assertThat(attributes, notNullValue());
+        assertThat(attributes.size(), is(1));
     }
-    
+
 }

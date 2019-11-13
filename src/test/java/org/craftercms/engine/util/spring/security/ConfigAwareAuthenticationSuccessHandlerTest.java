@@ -35,7 +35,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for {@link org.craftercms.engine.security.ConfigAwareLoginSuccessHandler}.
+ * Unit tests for {@link ConfigAwareAuthenticationSuccessHandler}.
  *
  * @author avasquez
  */

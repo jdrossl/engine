@@ -78,7 +78,7 @@ public class ConfigAwareSecurityMetadataSource implements FilterInvocationSecuri
                             new DefaultWebSecurityExpressionHandler());
 
                     // delegate to get an expression based result, this is the only way because related
-                    // classes are protected or final :(
+                    // classes are protected or final
                     return metadataSource.getAttributes(object);
                 }
             }

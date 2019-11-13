@@ -30,7 +30,10 @@ import org.springframework.security.web.util.UrlUtils;
 import org.springframework.util.Assert;
 
 /**
+ * Extension of {@link SimpleUrlAuthenticationFailureHandler} that uses site config to override properties
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ConfigAwareAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
@@ -46,8 +49,7 @@ public class ConfigAwareAuthenticationFailureHandler extends SimpleUrlAuthentica
         return defaultFailureUrl;
     }
 
-    // This was needed because the super class doesn't use getters for the url :(
-    // In a future update could be removed if that changes
+    // This was needed because the super class doesn't use getter for the url :(
 
     public void setDefaultFailureUrl(String defaultFailureUrl) {
         Assert.isTrue(UrlUtils.isValidRedirectUrl(defaultFailureUrl), "'"

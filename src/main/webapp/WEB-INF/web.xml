@@ -96,11 +96,6 @@
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
-<!--    <filter>-->
-<!--        <filter-name>crafter.securityFilter</filter-name>-->
-<!--        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
-<!--    </filter>-->
-
     <filter>
         <filter-name>crafter.securityFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -173,12 +168,6 @@
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
-
-<!--    <filter-mapping>-->
-<!--        <filter-name>crafter.securityFilter</filter-name>-->
-<!--        <url-pattern>/*</url-pattern>-->
-<!--        <dispatcher>REQUEST</dispatcher>-->
-<!--    </filter-mapping>-->
 
     <filter-mapping>
         <filter-name>crafter.securityFilter</filter-name>

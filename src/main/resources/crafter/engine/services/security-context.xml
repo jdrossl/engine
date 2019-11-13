@@ -98,8 +98,7 @@
 
     <bean id="crafter.rememberMeAuthenticationProvider"
           class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
-        <!-- TODO: Extract -->
-        <constructor-arg value="crafterRememberMeKey"/>
+        <constructor-arg value="${crafter.security.rememberme.key}"/>
     </bean>
 
     <bean id="crafter.standaloneHeadersAuthenticationProvider"
@@ -139,8 +138,7 @@
     <!-- Remember Me -->
     <bean id="crafter.rememberMeServices"
           class="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices">
-        <!-- TODO: Extract -->
-        <constructor-arg value="crafterRememberMeKey"/>
+        <constructor-arg value="${crafter.security.rememberme.key}"/>
         <constructor-arg ref="crafter.profileUserDetailsService"/>
     </bean>
 
@@ -201,13 +199,12 @@
     </bean>
 
     <bean id="crafter.profileHeadersAuthenticationFilter"
-          class="org.craftercms.engine.util.spring.security.profile.ProfileHeadersPreAuthenticatedFilter">
+          class="org.craftercms.engine.util.spring.security.profile.ProfileHeadersAuthenticationFilter">
         <constructor-arg ref="crafter.profileServiceRestClient"/>
         <constructor-arg ref="crafter.tenantServiceRestClient"/>
         <constructor-arg ref="crafter.tenantsResolver"/>
         <property name="authenticationManager" ref="crafter.authenticationManager"/>
-        <!-- TODO: Extract -->
-        <property name="tokenExpectedValue" value="some_secret"/>
+        <property name="defaultTokenValue" value="${crafter.security.header.token}"/>
     </bean>
 
     <!-- Security Filters -->
@@ -220,12 +217,11 @@
     <bean id="crafter.logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
         <constructor-arg ref="crafter.logoutSuccessHandler"/>
         <constructor-arg ref="crafter.logoutHandlers"/>
-        <!-- TODO: Extract -->
-        <property name="filterProcessesUrl" value="/crafter-security-logout"/>
+        <property name="filterProcessesUrl" value="${crafter.security.logout.url}"/>
     </bean>
 
     <bean id="crafter.standaloneHeadersAuthenticationFilter"
-          class="org.craftercms.engine.util.spring.security.headers.StandaloneHeadersPreAuthenticatedFilter">
+          class="org.craftercms.engine.util.spring.security.headers.StandaloneHeadersAuthenticationFilter">
         <constructor-arg ref="crafter.cacheTemplate"/>
         <property name="authenticationManager" ref="crafter.authenticationManager"/>
         <property name="authenticationDetailsSource" ref="crafter.defaultDetailsSource"/>
@@ -233,8 +229,7 @@
 
     <bean id="crafter.formLoginFilter"
           class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
-        <!-- TODO: Extract -->
-        <property name="filterProcessesUrl" value="/crafter-security-login"/>
+        <property name="filterProcessesUrl" value="${crafter.security.login.url}"/>
         <property name="authenticationManager" ref="crafter.authenticationManager"/>
         <property name="authenticationSuccessHandler" ref="crafter.loginSuccessHandler"/>
         <property name="authenticationFailureHandler" ref="crafter.loginFailureHandler"/>

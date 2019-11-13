@@ -30,7 +30,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit tests for {@link org.craftercms.engine.security.ConfigAwareLogoutSuccessHandler}.
+ * Unit tests for {@link ConfigAwareLogoutSuccessHandler}.
  *
  * @author avasquez
  */
