@@ -26,7 +26,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 /**
+ * Extension of {@link LoginUrlAuthenticationEntryPoint} that uses site config to override properties
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ConfigAwareLoginUrlAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
@@ -41,9 +44,10 @@ public class ConfigAwareLoginUrlAuthenticationEntryPoint extends LoginUrlAuthent
                                                      final HttpServletResponse response,
                                                      final AuthenticationException exception) {
         HierarchicalConfiguration siteConfig = ConfigUtils.getCurrentConfig();
-        if (siteConfig != null) {
-            return siteConfig.getString(LOGIN_FORM_URL_KEY, super.getLoginFormUrl());
+        if (siteConfig != null && siteConfig.containsKey(LOGIN_FORM_URL_KEY)) {
+            return siteConfig.getString(LOGIN_FORM_URL_KEY);
         }
         return super.getLoginFormUrl();
     }
+
 }

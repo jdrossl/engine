@@ -41,7 +41,10 @@ import static java.util.Collections.emptySet;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
+ * Implementation of {@link AbstractHeadersAuthenticationFilter} for standalone authentication
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class StandaloneHeadersAuthenticationFilter extends AbstractHeadersAuthenticationFilter {
 

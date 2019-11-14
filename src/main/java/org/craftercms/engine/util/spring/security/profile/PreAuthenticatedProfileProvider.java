@@ -24,7 +24,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 /**
+ * Implementation of {@link AuthenticationProvider} that handles pre-authenticated profiles
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class PreAuthenticatedProfileProvider implements AuthenticationProvider {
 

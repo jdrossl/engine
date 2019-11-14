@@ -23,15 +23,10 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
 
-<!--    <import resource="classpath:crafter/security/security-context.xml"/>-->
-    <import resource="classpath:crafter/profile/client-context.xml"/>
-
     <bean id="crafter.pageAccessManager" class="org.craftercms.engine.security.CrafterPageAccessManager">
         <property name="authorizedRolesXPathQuery"
                   value="${crafter.security.authorization.page.authorizedRoles.xpathQuery}"/>
     </bean>
-
-    <bean id="crafter.textEncryptor" class="org.craftercms.commons.crypto.impl.NoOpTextEncryptor"/>
 
     <!-- Spring Security Integration -->
 
@@ -60,6 +55,8 @@
           class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
 
     <util:list id="crafter.logoutHandlers">
+        <ref bean="crafter.profileLogoutHandler"/>
+        <ref bean="crafter.rememberMeServices"/>
         <ref bean="crafter.logoutHandler"/>
     </util:list>
 
@@ -136,6 +133,7 @@
     <bean id="crafter.requestCache" class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"/>
 
     <!-- Remember Me -->
+
     <bean id="crafter.rememberMeServices"
           class="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices">
         <constructor-arg value="${crafter.security.rememberme.key}"/>
@@ -144,41 +142,9 @@
 
     <!-- Profile Integration   -->
 
-    <bean id="crafter.defaultTenantResolver" class="org.craftercms.security.utils.tenant.DefaultTenantsResolver">
-        <property name="defaultTenantNames" value="${crafter.security.tenant.default.names}"/>
-    </bean>
-
-    <bean id="crafter.paramTenantResolver" class="org.craftercms.security.utils.tenant.ParamTenantsResolver"/>
-
-    <bean id="crafter.tenantsResolver" class="org.craftercms.security.utils.tenant.TenantsResolverChain">
-        <property name="resolvers">
-            <list>
-                <ref bean="crafter.paramTenantResolver"/>
-                <ref bean="crafter.defaultTenantResolver"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="crafter.authenticationCacheConfig" class="net.sf.ehcache.config.CacheConfiguration">
-        <property name="name" value="authenticationCache"/>
-        <property name="maxEntriesLocalHeap" value="${crafter.security.authentication.cache.maxElementsInMemory}"/>
-        <property name="timeToIdleSeconds" value="${crafter.security.authentication.cache.timeToIdle}"/>
-    </bean>
-
-    <bean id="crafter.ehCacheAuthenticationCache" class="org.craftercms.commons.cache.EhCacheFactoryBean">
-        <property name="configuration" ref="crafter.authenticationCacheConfig"/>
-    </bean>
-
-    <bean id="crafter.authenticationCache"
-          class="org.craftercms.security.authentication.impl.EhCacheAuthenticationCache">
-        <property name="cache" ref="crafter.ehCacheAuthenticationCache"/>
-    </bean>
-
-    <bean id="crafter.profileAuthenticationManager"
-          class="org.craftercms.security.authentication.impl.AuthenticationManagerImpl">
-        <property name="authenticationService" ref="crafter.authenticationServiceRestClient"/>
-        <property name="authenticationCache" ref="crafter.authenticationCache"/>
-        <property name="profileService" ref="crafter.profileServiceRestClient"/>
+    <bean id="crafter.profileLogoutHandler"
+          class="org.craftercms.engine.util.spring.security.profile.ProfileLogoutHandler">
+        <constructor-arg ref="crafter.profileAuthenticationManager"/>
     </bean>
 
     <bean id="crafter.profileAuthenticationProvider"

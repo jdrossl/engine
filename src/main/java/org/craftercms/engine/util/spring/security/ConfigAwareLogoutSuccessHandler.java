@@ -25,7 +25,10 @@ import org.craftercms.engine.util.ConfigUtils;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 /**
+ * Extension of {@link SimpleUrlLogoutSuccessHandler} that uses site config to override properties
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ConfigAwareLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 

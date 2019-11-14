@@ -29,7 +29,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
+ * Implementation of {@link UserDetailsService} that uses {@link ProfileService}
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ProfileUserDetailsService implements UserDetailsService {
 

@@ -29,7 +29,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import static java.util.stream.Collectors.toSet;
 
 /**
+ * Extension of {@link CustomUser} to wrap an {@link Authentication} or {@link Profile} instance
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ProfileUser extends CustomUser {
 
@@ -52,7 +55,6 @@ public class ProfileUser extends CustomUser {
     }
 
     public ProfileUser(final Profile profile, final UsernamePasswordAuthenticationToken token) {
-        // TODO: Encrypt password?
         super(profile.getUsername(), token != null? token.getCredentials().toString() : "N/A",
             profile.isEnabled(), true, true, true,
             profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(toSet()));

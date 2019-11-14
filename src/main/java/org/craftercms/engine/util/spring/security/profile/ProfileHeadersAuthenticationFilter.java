@@ -37,7 +37,10 @@ import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.StringUtils.isNoneEmpty;
 
 /**
+ * Implementation of {@link AbstractHeadersAuthenticationFilter} for Profile
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ProfileHeadersAuthenticationFilter extends AbstractHeadersAuthenticationFilter {
 

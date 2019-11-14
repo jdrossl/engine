@@ -26,18 +26,26 @@ import javax.servlet.http.HttpSession;
 
 import org.bson.types.ObjectId;
 import org.craftercms.engine.controller.rest.preview.ProfileRestController;
+import org.craftercms.engine.util.spring.security.ConfigAwarePreAuthenticationFilter;
 import org.craftercms.engine.util.spring.security.profile.ProfileUser;
 import org.craftercms.profile.api.Profile;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
 
 /**
+ * Implementation of {@link ConfigAwarePreAuthenticationFilter} for Studio targeting
+ *
  * @author joseross
+ * @since 3.1.5
  */
-public class TargetingPreAuthenticatedFilter extends AbstractPreAuthenticatedProcessingFilter {
+public class TargetingPreAuthenticatedFilter extends ConfigAwarePreAuthenticationFilter {
 
     public TargetingPreAuthenticatedFilter() {
+        // always enabled
+        super(null);
+        setAlwaysEnabled(true);
+        setSupportedPrincipalClass(ProfileUser.class);
+
         setCheckForPrincipalChanges(true);
     }
 
@@ -86,7 +94,7 @@ public class TargetingPreAuthenticatedFilter extends AbstractPreAuthenticatedPro
 
     @Override
     protected Object getPreAuthenticatedCredentials(final HttpServletRequest request) {
-        return "preview";
+        return "N/A";
     }
     
 }

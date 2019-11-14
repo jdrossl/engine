@@ -25,7 +25,10 @@ import org.craftercms.engine.util.ConfigUtils;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 /**
+ * Extension of {@link SavedRequestAwareAuthenticationSuccessHandler} that uses site config to override properties
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ConfigAwareAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 

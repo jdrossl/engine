@@ -26,7 +26,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 /**
+ * Extension of {@link User} that includes custom attributes for site personalization
+ *
+ * <p>Note: This class should be used by all authentication providers to integrate with features like targeting</p>
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class CustomUser extends User {
 

@@ -31,7 +31,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
+ * Extension of {@link AbstractPreAuthenticatedProcessingFilter} that uses site config to enable processing:
  *
+ * <ul>
+ *     <li>If {@code alwaysEnabled} is {@code true}</li> the filter will be executed, even if there is no site
+ *     configuration available
+ *     <li>If the site configuration contains the {@code enabledConfigKey} with a value of {@link true} the filter
+ *     will be executed</li>
+ * </ul>
+ *
+ * Additionally if the existing principal is an instance of any class other than {@code supportedPrincipalClass} the
+ * filter will not be executed
  *
  * @author joseross
  * @since 3.1.5

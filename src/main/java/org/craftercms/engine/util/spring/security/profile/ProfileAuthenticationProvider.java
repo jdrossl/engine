@@ -28,7 +28,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
+ * Implementation of {@link AbstractUserDetailsAuthenticationProvider} that handles form login for with Profile
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ProfileAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 

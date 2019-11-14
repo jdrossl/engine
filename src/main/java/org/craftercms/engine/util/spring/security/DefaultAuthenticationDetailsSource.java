@@ -25,7 +25,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 
 /**
+ * Extension of {@link WebAuthenticationDetailsSource} that always returns instances of
+ * {@link PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails}
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class DefaultAuthenticationDetailsSource extends WebAuthenticationDetailsSource {
 

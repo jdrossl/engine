@@ -30,9 +30,11 @@ import org.craftercms.engine.service.context.SiteContext;
 import org.craftercms.engine.util.ConfigUtils;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.access.SecurityMetadataSource;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -40,7 +42,13 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import static java.util.Collections.singleton;
 
 /**
+ * Implementation of {@link FilterInvocationSecurityMetadataSource} that uses site config.
+ *
+ * <p>Note: This class delegates the actual work to an instance of
+ * {@link ExpressionBasedFilterInvocationSecurityMetadataSource} because the class is final so it can't be extended.</p>
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class ConfigAwareSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
@@ -59,7 +67,7 @@ public class ConfigAwareSecurityMetadataSource implements FilterInvocationSecuri
     @Override
     @SuppressWarnings("unchecked")
     public Collection<ConfigAttribute> getAttributes(final Object object) throws IllegalArgumentException {
-        Callback<Collection<ConfigAttribute>> callback = () -> {
+        Callback<SecurityMetadataSource> callback = () -> {
             HierarchicalConfiguration siteConfig = ConfigUtils.getCurrentConfig();
             if (siteConfig != null) {
                 List<HierarchicalConfiguration> restrictionsConfig = siteConfig.configurationsAt(URL_RESTRICTION_KEY);
@@ -73,21 +81,19 @@ public class ConfigAwareSecurityMetadataSource implements FilterInvocationSecuri
                             map.put(matcher, singleton(new SecurityConfig(expression)));
                         }
                     }
-                    ExpressionBasedFilterInvocationSecurityMetadataSource metadataSource =
-                        new ExpressionBasedFilterInvocationSecurityMetadataSource(map,
-                            new DefaultWebSecurityExpressionHandler());
-
-                    // delegate to get an expression based result, this is the only way because related
-                    // classes are protected or final
-                    return metadataSource.getAttributes(object);
+                    return new ExpressionBasedFilterInvocationSecurityMetadataSource(map,
+                        new DefaultWebSecurityExpressionHandler());
                 }
             }
-            return null;
+            return new DefaultFilterInvocationSecurityMetadataSource(new LinkedHashMap<>());
         };
 
         SiteContext siteContext = SiteContext.getCurrent();
         if (siteContext != null) {
-            return cacheTemplate.getObject(siteContext.getContext(), callback, URL_RESTRICTIONS_CACHE_KEY);
+            SecurityMetadataSource metadataSource =
+                cacheTemplate.getObject(siteContext.getContext(), callback, URL_RESTRICTIONS_CACHE_KEY);
+
+            return metadataSource.getAttributes(object);
         }
         return null;
     }

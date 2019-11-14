@@ -25,7 +25,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService;
 
 /**
+ * Extension of {@link PreAuthenticatedGrantedAuthoritiesUserDetailsService} that always returns the same principal
+ * obtained from the authentication filter
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class DefaultPreAuthenticatedUserDetailsService extends PreAuthenticatedGrantedAuthoritiesUserDetailsService {
 

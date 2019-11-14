@@ -27,7 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Extension of {@link ConfigAwarePreAuthenticationFilter} for handling header based pre-authentication
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public abstract class AbstractHeadersAuthenticationFilter extends ConfigAwarePreAuthenticationFilter {
 

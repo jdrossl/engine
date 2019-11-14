@@ -30,7 +30,7 @@ import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 /**
- * Implementation of {@link AccessDeniedHandler} that uses site config
+ * Implementation of {@link AccessDeniedHandler} that uses site config for properties
  *
  * @author joseross
  * @since 3.1.5

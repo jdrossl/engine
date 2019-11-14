@@ -28,7 +28,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import static java.util.stream.Collectors.toList;
 
 /**
+ * Implementation of {@link SecurityFilterChain} that handles excluded urls
+ *
  * @author joseross
+ * @since 3.1.5
  */
 public class DefaultSecurityFilterChain implements SecurityFilterChain {
 
