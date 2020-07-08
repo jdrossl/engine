@@ -15,11 +15,15 @@
  */
 package org.craftercms.engine.view.freemarker;
 
+import org.craftercms.commons.locale.LocaleUtils;
 import org.craftercms.engine.scripting.SiteItemScriptResolver;
 import org.craftercms.engine.service.SiteItemService;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
+
+import java.util.Locale;
 
 /**
  * View resolver tha resolves to {@link CrafterFreeMarkerView}s.
@@ -66,6 +70,11 @@ public class CrafterFreeMarkerViewResolver extends FreeMarkerViewResolver {
 
     @Override
     protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+        Locale locale = LocaleContextHolder.getLocale();
+        String localeValue = LocaleUtils.toString(locale);
+
+
+
         CrafterFreeMarkerView view = (CrafterFreeMarkerView) super.buildView(viewName);
         view.setSiteItemService(siteItemService);
         view.setComponentTemplateXPathQuery(componentTemplateXPathQuery);

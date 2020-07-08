@@ -19,15 +19,18 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.PredicateUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.craftercms.commons.converters.Converter;
+import org.craftercms.commons.locale.LocaleUtils;
 import org.craftercms.core.processors.ItemProcessor;
 import org.craftercms.core.processors.impl.ItemProcessorPipeline;
 import org.craftercms.core.service.Content;
@@ -46,6 +49,7 @@ import org.craftercms.engine.service.filter.ExpectedNodeValueItemFilter;
 import org.craftercms.engine.service.filter.IncludeByNameItemFilter;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * Default implementation of {@link SiteItemService}.
@@ -111,7 +115,15 @@ public class SiteItemServiceImpl implements SiteItemService {
     public SiteItem getSiteItem(String url, ItemProcessor processor, Predicate<Item> predicate) {
         SiteContext context = getSiteContext();
 
-        if(!storeService.exists(context.getContext(), url)) {
+        Locale locale = LocaleContextHolder.getLocaleContext().getLocale();
+        String localeUrl = FilenameUtils.getPath(url) + FilenameUtils.getBaseName(url) + "_" + LocaleUtils.toString(locale) + "." + FilenameUtils.getExtension(url);
+
+        //TODO: Make fallback optional
+        if (storeService.exists(context.getContext(), localeUrl)) {
+            url = localeUrl;
+        }
+
+        if (!storeService.exists(context.getContext(), url)) {
             return null;
         }
 

@@ -770,6 +770,10 @@
         <property name="targetIdManager" ref="crafter.proxyTargetIdManager"/>
     </bean>
 
+    <bean id="crafter.localeItemProcessor" class="org.craftercms.engine.navigation.impl.LocaleItemProcessor">
+        <constructor-arg ref="crafter.contentStoreService"/>
+    </bean>
+
     <bean id="crafter.rejectIndexFilesItemFilter"
           class="org.craftercms.engine.navigation.impl.RejectIndexFilesItemFilter">
         <property name="targetedUrlStrategy" ref="crafter.proxyTargetedUrlStrategy"/>
@@ -787,6 +791,7 @@
     <util:list id="crafter.navTreeProcessors">
         <ref bean="crafter.folderToIndexItemProcessor"/>
         <ref bean="crafter.currentTargetedVersionItemProcessor"/>
+        <ref bean="crafter.localeItemProcessor"/>
     </util:list>
 
     <util:list id="crafter.navTreeFilters">
